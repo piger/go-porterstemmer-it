@@ -369,7 +369,7 @@ func prepareWord(word string) string {
 }
 
 // StemWord returns the italian stemming for the word w.
-func StemWord(w string) string {
+func StemString(w string) string {
 	word := prepareWord(w)
 	word0 := step0(word)
 	word1 := step1(word0)

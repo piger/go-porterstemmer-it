@@ -43,7 +43,7 @@ func TestR12(t *testing.T) {
 	}
 }
 
-func TestStemWord(t *testing.T) {
+func TestStemString(t *testing.T) {
 
 	var words [][]string = [][]string{
 		{"abbandonata", "abbandon"},
@@ -63,7 +63,7 @@ func TestStemWord(t *testing.T) {
 	}
 
 	for _, word := range words {
-		result := StemWord(word[0])
+		result := StemString(word[0])
 		if result != word[1] {
 			t.Fatalf("%q: should be %q, is %q\n", word[0], word[1], result)
 		}
@@ -90,7 +90,7 @@ func TestFiles(t *testing.T) {
 		sIn := scannerIn.Text()
 		sOut := scannerOut.Text()
 
-		result := StemWord(sIn)
+		result := StemString(sIn)
 		if result != sOut {
 			t.Fatalf("%q: should be %q, is %q\n", sIn, sOut, result)
 		}
