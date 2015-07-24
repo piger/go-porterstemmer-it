@@ -1,6 +1,8 @@
 package runic
 
 import (
+	"bufio"
+	"os"
 	"testing"
 )
 
@@ -57,6 +59,33 @@ func TestStemWord(t *testing.T) {
 		rv = StemWord(test.Word)
 		if !Equal(rv, test.Stem) {
 			t.Fatalf("Stem failed: '%s'->'%s' (should be: '%s')\n", string(test.Word), string(rv), string(test.Stem))
+		}
+	}
+}
+
+func TestFiles(t *testing.T) {
+	inFile, err := os.Open("../voc.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer inFile.Close()
+
+	outFile, err := os.Open("../output.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer outFile.Close()
+
+	scannerIn := bufio.NewScanner(inFile)
+	scannerOut := bufio.NewScanner(outFile)
+
+	for scannerIn.Scan() && scannerOut.Scan() {
+		sIn := scannerIn.Text()
+		sOut := scannerOut.Text()
+
+		result := StemWord([]rune(sIn))
+		if !Equal(result, []rune(sOut)) {
+			t.Fatalf("%q: should be %q, is %q\n", string(sIn), string(sOut), string(result))
 		}
 	}
 }

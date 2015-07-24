@@ -1,5 +1,7 @@
 package runic
 
+// TODO: sort the []rune arrays! because you usually search for the longest match
+
 var s0suff [][]rune = [][]rune{
 	[]rune("gliela"),
 	[]rune("gliele"),
