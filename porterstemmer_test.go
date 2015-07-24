@@ -6,78 +6,89 @@ import (
 	"testing"
 )
 
-func testWord(old, new string, t *testing.T) {
-	result := prepareWord(old)
-	if result != new {
-		t.Fatalf("%s: should be %q, is %q\n", old, new, result)
-	}
+type StemTest struct {
+	Word []rune
+	Stem []rune
 }
 
 func TestPrepareWord(t *testing.T) {
-	testWord("bellí", "bellì", t)
-	testWord("aiuola", "aIUola", t)
-	testWord("buio", "buIo", t)
-	testWord("báccánó", "bàccànò", t)
-	testWord("quadro", "qUadro", t)
-}
-
-func TestR12(t *testing.T) {
-	var words [][]string = [][]string{
-		{"beautiful", "iful", "ul"},
-		{"beauty", "y", ""},
-		{"beau", "", ""},
-		{"animadversion", "imadversion", "adversion"},
-		{"sprinkled", "kled", ""},
-		{"eucharist", "harist", "ist"},
-		{"giocatrici", "atrici", "rici"},
+	tests := []StemTest{
+		StemTest{[]rune("bellí"), []rune("bellì")},
+		StemTest{[]rune("aiuola"), []rune("aIUola")},
+		StemTest{[]rune("buio"), []rune("buIo")},
+		StemTest{[]rune("báccánó"), []rune("bàccànò")},
+		StemTest{[]rune("quadro"), []rune("qUadro")},
 	}
 
-	for _, word := range words {
-		r1, r2 := findR12(word[0])
-		if word[1] != word[0][r1:] {
-			t.Fatalf("should be %q, is %q\n", word[1], word[0][r1:])
-		}
-		if word[2] != word[0][r2:] {
-			t.Fatalf("should be %q, is %q\n", word[2], word[0][r2:])
+	for _, test := range tests {
+		result := prepareWord(test.Word)
+		if !Equal(result, test.Stem) {
+			t.Fatalf("'%s' should be %q, is %q\n", string(test.Word), string(test.Stem), string(result))
 		}
 	}
+
 }
 
-func TestStemString(t *testing.T) {
+func TestEqual(t *testing.T) {
+	a := []rune("ciao")
+	b := []rune("pippo")
 
-	var words [][]string = [][]string{
-		{"abbandonata", "abbandon"},
-		{"abbandonate", "abbandon"},
-		{"abbandonati", "abbandon"},
-		{"abbandonato", "abbandon"},
-		{"abbandonava", "abbandon"},
-		{"abbandonerà", "abbandon"},
-		{"abbandonerò", "abbandon"},
-		{"abbandoneranno", "abbandon"},
-		{"abbandono", "abband"},
-		{"abbaruffato", "abbaruff"},
-		{"abbassamento", "abbass"},
-		{"propagarla", "propag"},
-		{"propizio", "propiz"},
-		{"propio", "prop"},
+	if Equal(a, b) {
+		t.Fail()
 	}
 
-	for _, word := range words {
-		result := StemString(word[0])
-		if result != word[1] {
-			t.Fatalf("%q: should be %q, is %q\n", word[0], word[1], result)
+	if !Equal([]rune("peto"), []rune("peto")) {
+		t.Fail()
+	}
+}
+
+func TestHasSuffix(t *testing.T) {
+	a := []rune("cippalippa")
+	if !HasSuffix(a, []rune("lippa")) {
+		t.Fail()
+	}
+
+	b := []rune("petofono")
+	if HasSuffix(b, []rune("cazzy")) {
+		t.Fail()
+	}
+}
+
+func TestStemWord(t *testing.T) {
+	tests := []StemTest{
+		StemTest{[]rune("abbandonata"), []rune("abbandon")},
+		StemTest{[]rune("abbandonate"), []rune("abbandon")},
+		StemTest{[]rune("abbandonati"), []rune("abbandon")},
+		StemTest{[]rune("abbandonato"), []rune("abbandon")},
+		StemTest{[]rune("abbandonava"), []rune("abbandon")},
+		StemTest{[]rune("abbandonerà"), []rune("abbandon")},
+		StemTest{[]rune("abbandonerò"), []rune("abbandon")},
+		StemTest{[]rune("abbandoneranno"), []rune("abbandon")},
+		StemTest{[]rune("abbandono"), []rune("abband")},
+		StemTest{[]rune("abbaruffato"), []rune("abbaruff")},
+		StemTest{[]rune("abbassamento"), []rune("abbass")},
+		StemTest{[]rune("propagarla"), []rune("propag")},
+		StemTest{[]rune("propizio"), []rune("propiz")},
+		StemTest{[]rune("propio"), []rune("prop")},
+	}
+
+	var rv []rune
+	for _, test := range tests {
+		rv = StemWithoutLowerCasing(test.Word)
+		if !Equal(rv, test.Stem) {
+			t.Fatalf("Stem failed: '%s'->'%s' (should be: '%s')\n", string(test.Word), string(rv), string(test.Stem))
 		}
 	}
 }
 
 func TestFiles(t *testing.T) {
-	inFile, err := os.Open("voc.txt")
+	inFile, err := os.Open("../voc.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer inFile.Close()
 
-	outFile, err := os.Open("output.txt")
+	outFile, err := os.Open("../output.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,9 +101,9 @@ func TestFiles(t *testing.T) {
 		sIn := scannerIn.Text()
 		sOut := scannerOut.Text()
 
-		result := StemString(sIn)
-		if result != sOut {
-			t.Fatalf("%q: should be %q, is %q\n", sIn, sOut, result)
+		result := StemWithoutLowerCasing([]rune(sIn))
+		if !Equal(result, []rune(sOut)) {
+			t.Fatalf("%q: should be %q, is %q\n", string(sIn), string(sOut), string(result))
 		}
 	}
 }
