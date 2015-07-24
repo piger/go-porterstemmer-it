@@ -348,6 +348,10 @@ func findR12(word []rune) (int, int) {
 func findRV(word []rune) int {
 	l := len(word)
 
+	// when word[1] cannot be found
+	if l <= 2 {
+		return l
+	}
 	ch1 := word[0]
 	ch2 := word[1]
 
