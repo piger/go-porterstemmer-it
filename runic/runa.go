@@ -7,8 +7,6 @@ import (
 	"unicode"
 )
 
-// TODO: sort the []rune arrays! because you usually search for the longest match
-
 var s0suff [][]rune = [][]rune{
 	[]rune("gliela"),
 	[]rune("gliele"),
@@ -53,13 +51,13 @@ var step1suffs [][]rune = [][]rune{
 	[]rune("atrici"),
 	[]rune("atrice"),
 	[]rune("mente"),
-	[]rune("istì"),
-	[]rune("istè"),
-	[]rune("istà"),
 	[]rune("ibili"),
 	[]rune("ibile"),
 	[]rune("abili"),
 	[]rune("abile"),
+	[]rune("istì"),
+	[]rune("istè"),
+	[]rune("istà"),
 	[]rune("isti"),
 	[]rune("iste"),
 	[]rune("ista"),
@@ -120,14 +118,10 @@ var verbsuff [][]rune = [][]rune{
 	[]rune("isci"),
 	[]rune("isce"),
 	[]rune("isca"),
-	[]rune("irò"),
-	[]rune("irà"),
 	[]rune("irei"),
 	[]rune("irai"),
 	[]rune("immo"),
 	[]rune("iamo"),
-	[]rune("erò"),
-	[]rune("erà"),
 	[]rune("erei"),
 	[]rune("erai"),
 	[]rune("endo"),
@@ -140,6 +134,10 @@ var verbsuff [][]rune = [][]rune{
 	[]rune("ando"),
 	[]rune("ammo"),
 	[]rune("Yamo"),
+	[]rune("irò"),
+	[]rune("irà"),
+	[]rune("erò"),
+	[]rune("erà"),
 	[]rune("uto"),
 	[]rune("uti"),
 	[]rune("ute"),
