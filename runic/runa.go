@@ -3,6 +3,10 @@
 // See: http://snowball.tartarus.org/algorithms/italian/stemmer.html
 package runic
 
+import (
+	"unicode"
+)
+
 // TODO: sort the []rune arrays! because you usually search for the longest match
 
 var s0suff [][]rune = [][]rune{
@@ -677,9 +681,23 @@ func prepareWord(word []rune) []rune {
 	return newword
 }
 
-// StemWord returns the italian stemming for the word w.
-func StemWord(w []rune) []rune {
-	word := prepareWord(w)
+// Stem returns the italian stemming for the word s, lowercased.
+func Stem(s []rune) []rune {
+	l := len(s)
+	if l == 0 {
+		return s
+	}
+	for i := 0; i < l; i++ {
+		s[i] = unicode.ToLower(s[i])
+	}
+
+	result := StemWithoutLowerCasing(s)
+	return result
+}
+
+// StemWithoutLowerCasing returns the italian stemming for the word s.
+func StemWithoutLowerCasing(s []rune) []rune {
+	word := prepareWord(s)
 	word0 := step0(word)
 	word1 := step1(word0)
 

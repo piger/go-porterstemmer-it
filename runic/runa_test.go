@@ -56,7 +56,7 @@ func TestStemWord(t *testing.T) {
 
 	var rv []rune
 	for _, test := range tests {
-		rv = StemWord(test.Word)
+		rv = StemWithoutLowerCasing(test.Word)
 		if !Equal(rv, test.Stem) {
 			t.Fatalf("Stem failed: '%s'->'%s' (should be: '%s')\n", string(test.Word), string(rv), string(test.Stem))
 		}
@@ -83,7 +83,7 @@ func TestFiles(t *testing.T) {
 		sIn := scannerIn.Text()
 		sOut := scannerOut.Text()
 
-		result := StemWord([]rune(sIn))
+		result := StemWithoutLowerCasing([]rune(sIn))
 		if !Equal(result, []rune(sOut)) {
 			t.Fatalf("%q: should be %q, is %q\n", string(sIn), string(sOut), string(result))
 		}
