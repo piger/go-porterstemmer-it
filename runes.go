@@ -1,6 +1,10 @@
+// Copyright 2009 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package porterstemmer
 
-// A bunch of functions copied from the Go standard library:
+// A bunch of functions copied and modified from the Go standard library:
 // https://golang.org/src/bytes/bytes.go
 
 func equal(a, b []rune) bool {
