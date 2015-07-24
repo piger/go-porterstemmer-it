@@ -540,6 +540,13 @@ func prepareWord(word []rune) []rune {
 	return newword
 }
 
+// Stem returns the italian stemming for the string s, lowercased.
+func StemString(s string) string {
+	runeWord := []rune(s)
+	result := Stem(runeWord)
+	return string(result)
+}
+
 // Stem returns the italian stemming for the word s, lowercased.
 func Stem(s []rune) []rune {
 	l := len(s)
