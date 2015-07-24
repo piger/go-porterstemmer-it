@@ -1,3 +1,6 @@
+// An implementation of the Porter Stemming algorithm for the italian language.
+//
+// See: http://snowball.tartarus.org/algorithms/italian/stemmer.html
 package runic
 
 // TODO: sort the []rune arrays! because you usually search for the longest match
@@ -318,6 +321,8 @@ func isVowel(r rune) bool {
 	return false
 }
 
+// findRegion returns the start of the first region in word; a region starts from a
+// non-vowel charcter followed by a vowel.
 func findRegion(word []rune, start int) int {
 	l := len(word)
 	var oldr rune
@@ -336,6 +341,11 @@ func findRegion(word []rune, start int) int {
 	return l
 }
 
+// findR12 finds the R1 and R2 region for a word.
+//   - R1 is the region after the first non-vowel following a vowel, or is the null
+//     region at the end of the word if there is no such non-vowel.
+//   - R2 is the region after the first non-vowel following a vowel in R1, or is the
+//     null region at the end of the word if there is no such non-vowel.
 func findR12(word []rune) (int, int) {
 	l := len(word)
 	r1 := findRegion(word, 0)
@@ -347,6 +357,12 @@ func findR12(word []rune) (int, int) {
 	return r1, r2
 }
 
+// findRV returns the RV region.
+// If the second letter is a consonant, RV is the region after the
+// next following vowel, or if the first two letters are vowels, RV is
+// the region after the next consonant, and otherwise (consonant-vowel
+// case) RV is the region after the third letter. But RV is the end of
+// the word if these positions cannot be found.
 func findRV(word []rune) int {
 	l := len(word)
 
@@ -383,9 +399,13 @@ func findRV(word []rune) int {
 		return l
 	}
 
+	// "and otherwise (consonant-vowel case) RV is the region after the third letter."
 	return 3
 }
 
+// replaceInRegion search for suffixes inside the region defined by rX inside word
+// and replaces the suffix with repl; returns the modified word and true when it
+// was modified.
 func replaceInRegion(word []rune, suffixes [][]rune, repl []rune, rX int) ([]rune, bool) {
 	var p int
 
@@ -400,6 +420,7 @@ func replaceInRegion(word []rune, suffixes [][]rune, repl []rune, rX int) ([]run
 	return word, false
 }
 
+// Step 0) Attached pronoun
 func step0(word []rune) []rune {
 	rv := findRV(word)
 
@@ -430,6 +451,8 @@ func step0(word []rune) []rune {
 	return word
 }
 
+// Step 1) Standard suffix removal:
+// search for the longest among the following suffixes, and perform the action indicated.
 func step1(word []rune) []rune {
 	var p int
 	r1, r2 := findR12(word)
@@ -538,6 +561,8 @@ func step1(word []rune) []rune {
 	return word
 }
 
+// Step 2) Verb suffixes:
+// search for the longest among the following suffixes in *RV*, and if found, delete.
 func step2(word []rune) []rune {
 	rv := findRV(word)
 
@@ -608,6 +633,7 @@ func restoreString(word []rune) []rune {
 	return word
 }
 
+// prepareWord returns a string "prepared" for stemming; it's the first step.
 func prepareWord(word []rune) []rune {
 	for i, r := range word {
 		switch r {
@@ -651,6 +677,7 @@ func prepareWord(word []rune) []rune {
 	return newword
 }
 
+// StemWord returns the italian stemming for the word w.
 func StemWord(w []rune) []rune {
 	word := prepareWord(w)
 	word0 := step0(word)
