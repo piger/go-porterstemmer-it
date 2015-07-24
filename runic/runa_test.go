@@ -6,6 +6,29 @@ import (
 	"testing"
 )
 
+type StemTest struct {
+	Word []rune
+	Stem []rune
+}
+
+func TestPrepareWord(t *testing.T) {
+	tests := []StemTest{
+		StemTest{[]rune("bellí"), []rune("bellì")},
+		StemTest{[]rune("aiuola"), []rune("aIUola")},
+		StemTest{[]rune("buio"), []rune("buIo")},
+		StemTest{[]rune("báccánó"), []rune("bàccànò")},
+		StemTest{[]rune("quadro"), []rune("qUadro")},
+	}
+
+	for _, test := range tests {
+		result := prepareWord(test.Word)
+		if !Equal(result, test.Stem) {
+			t.Fatalf("'%s' should be %q, is %q\n", string(test.Word), string(test.Stem), string(result))
+		}
+	}
+
+}
+
 func TestEqual(t *testing.T) {
 	a := []rune("ciao")
 	b := []rune("pippo")
@@ -29,11 +52,6 @@ func TestHasSuffix(t *testing.T) {
 	if HasSuffix(b, []rune("cazzy")) {
 		t.Fail()
 	}
-}
-
-type StemTest struct {
-	Word []rune
-	Stem []rune
 }
 
 func TestStemWord(t *testing.T) {
