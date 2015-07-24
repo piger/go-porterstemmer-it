@@ -82,13 +82,13 @@ func TestStemWord(t *testing.T) {
 }
 
 func TestFiles(t *testing.T) {
-	inFile, err := os.Open("voc.txt")
+	inFile, err := os.Open("./testdata/voc.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer inFile.Close()
 
-	outFile, err := os.Open("output.txt")
+	outFile, err := os.Open("./testdata/output.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
