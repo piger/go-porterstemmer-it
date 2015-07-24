@@ -2,6 +2,8 @@
 
 A native Go implementation of the Porter Stemmer Algorithm for the italian language with a public API compatible with [go-porterstemmer](https://github.com/blevesearch/go-porterstemmer).
 
+**NOTE**: this package needs a lot more testing before I can consider it *stable*.
+
 For more informations see:
 
 http://snowball.tartarus.org/algorithms/italian/stemmer.html
