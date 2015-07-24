@@ -169,150 +169,11 @@ var verbsuff [][]rune = [][]rune{
 	[]rune("ar"),
 }
 
-func Equal(a, b []rune) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, c := range a {
-		if c != b[i] {
-			return false
-		}
-	}
-	return true
-}
-
-func HasSuffix(s, suffix []rune) bool {
-	return len(s) >= len(suffix) && Equal(s[len(s)-len(suffix):], suffix)
-}
-
-// https://golang.org/src/bytes/bytes.go
-func LastIndex(s, sep []rune) (result int) {
-	n := len(sep)
-	if n == 0 {
-		return len(s)
-	}
-	c := sep[0]
-	for i := len(s) - n; i >= 0; i-- {
-		if s[i] == c && (n == 1 || Equal(s[i:i+n], sep)) {
-			return i
-		}
-	}
-	return -1
-}
-
-func IndexRune(s []rune, c rune) int {
-	for i, r := range s {
-		if r == c {
-			return i
-		}
-	}
-	return -1
-}
-
-func Index(s, sep []rune) int {
-	n := len(sep)
-	if n == 0 {
-		return 0
-	}
-	if n > len(s) {
-		return -1
-	}
-	c := sep[0]
-	if n == 1 {
-		return IndexRune(s, c)
-	}
-	i := 0
-	t := s[:len(s)-n+1]
-	for i < len(t) {
-		if t[i] != c {
-			o := IndexRune(t[i:], c)
-			if o < 0 {
-				break
-			}
-			i += o
-		}
-		if Equal(s[i:i+n], sep) {
-			return i
-		}
-		i++
-	}
-	return -1
-}
-
-func Count(s, sep []rune) int {
-	n := len(sep)
-	if n == 0 {
-		return len(s) + 1
-	}
-	if n > len(s) {
-		return 0
-	}
-	count := 0
-	c := sep[0]
-	i := 0
-	t := s[:len(s)-n+1]
-	for i < len(t) {
-		if t[i] != c {
-			o := IndexRune(t[i:], c)
-			if o < 0 {
-				break
-			}
-			i += o
-		}
-		if n == 1 || Equal(s[i:i+n], sep) {
-			count++
-			i += n
-			continue
-		}
-		i++
-	}
-	return count
-}
-
-func Replace(s, old, new []rune, n int) []rune {
-	m := 0
-	if n != 0 {
-		m = Count(s, old)
-	}
-	if m == 0 {
-		// XXX why []rune(nil)? they return: append([]byte(nil), s...)
-		return append([]rune(nil), s...)
-	}
-	if n < 0 || m < n {
-		n = m
-	}
-
-	t := make([]rune, len(s)+n*(len(new)-len(old)))
-	w := 0
-	start := 0
-	for i := 0; i < n; i++ {
-		j := start
-		if len(old) == 0 {
-			if i > 0 {
-				j++
-			}
-		} else {
-			j += Index(s[start:], old)
-		}
-		w += copy(t[w:], s[start:j])
-		w += copy(t[w:], new)
-		start = j + len(old)
-
-	}
-	w += copy(t[w:], s[start:])
-	return t[0:w]
-}
-
-// ---
-
-// XXX VERIFY THIS FUNCTION
 func Join(a, b []rune) []rune {
 	result := make([]rune, len(a)+len(b))
 	bp := copy(result, a)
 	copy(result[bp:], b)
 	return result
-	// result = append(result, a...)
-	// return append(result, b...)
 }
 
 func isVowel(r rune) bool {
@@ -412,8 +273,8 @@ func replaceInRegion(word []rune, suffixes [][]rune, repl []rune, rX int) ([]run
 	var p int
 
 	for _, s := range suffixes {
-		if HasSuffix(word, s) {
-			p = LastIndex(word, s)
+		if hasSuffix(word, s) {
+			p = lastIndex(word, s)
 			if p >= rX {
 				return Join(word[0:p], repl), true
 			}
@@ -431,8 +292,8 @@ func step0(word []rune) []rune {
 
 		for _, suff1 := range [][]rune{[]rune("ando"), []rune("endo")} {
 			suffj := Join(suff1, suff2)
-			if HasSuffix(word, suffj) {
-				p = LastIndex(word, suffj)
+			if hasSuffix(word, suffj) {
+				p = lastIndex(word, suffj)
 				if p != -1 && p >= rv {
 					return word[0 : p+len(suff1)]
 				}
@@ -441,8 +302,8 @@ func step0(word []rune) []rune {
 
 		for _, suff1 := range [][]rune{[]rune("ar"), []rune("er"), []rune("ir")} {
 			suffj := Join(suff1, suff2)
-			if HasSuffix(word, suffj) {
-				p = LastIndex(word, suffj)
+			if hasSuffix(word, suffj) {
+				p = lastIndex(word, suffj)
 				if p != -1 && p >= rv {
 					return Join(word[0:p+len(suff1)], []rune{'e'})
 				}
@@ -460,18 +321,18 @@ func step1(word []rune) []rune {
 	r1, r2 := findR12(word)
 	rv := findRV(word)
 
-	if HasSuffix(word, []rune("amente")) {
-		p := LastIndex(word, []rune("amente"))
+	if hasSuffix(word, []rune("amente")) {
+		p := lastIndex(word, []rune("amente"))
 		if p >= r1 {
 			word = word[0:p]
 
-			if HasSuffix(word, []rune("iv")) {
-				p = LastIndex(word, []rune("iv"))
+			if hasSuffix(word, []rune("iv")) {
+				p = lastIndex(word, []rune("iv"))
 				if p >= r2 {
 					word = word[0:p]
 
-					if HasSuffix(word, []rune("at")) {
-						p = LastIndex(word, []rune("at"))
+					if hasSuffix(word, []rune("at")) {
+						p = lastIndex(word, []rune("at"))
 						if p >= r2 {
 							word = word[0:p]
 						}
@@ -485,8 +346,8 @@ func step1(word []rune) []rune {
 	}
 
 	for _, s := range step1suffs {
-		if HasSuffix(word, s) {
-			p = LastIndex(word, s)
+		if hasSuffix(word, s) {
+			p = lastIndex(word, s)
 			if p >= r2 {
 				return word[0:p]
 			} else {
@@ -496,13 +357,13 @@ func step1(word []rune) []rune {
 	}
 
 	for _, s := range [][]rune{[]rune("azione"), []rune("azioni"), []rune("atore"), []rune("atori")} {
-		if HasSuffix(word, s) {
-			p = LastIndex(word, s)
+		if hasSuffix(word, s) {
+			p = lastIndex(word, s)
 			if p >= r2 {
 				word = word[0:p]
 
-				if HasSuffix(word, []rune("ic")) {
-					p = LastIndex(word, []rune("ic"))
+				if hasSuffix(word, []rune("ic")) {
+					p = lastIndex(word, []rune("ic"))
 					if p >= r2 {
 						return word[0:p]
 					}
@@ -529,8 +390,8 @@ func step1(word []rune) []rune {
 		return word
 	}
 
-	if HasSuffix(word, []rune("ità")) {
-		p = LastIndex(word, []rune("ità"))
+	if hasSuffix(word, []rune("ità")) {
+		p = lastIndex(word, []rune("ità"))
 		if p >= r2 {
 			word = word[0:p]
 		}
@@ -539,18 +400,18 @@ func step1(word []rune) []rune {
 	}
 
 	for _, s := range [][]rune{[]rune("ivo"), []rune("ivi"), []rune("iva"), []rune("ive")} {
-		if HasSuffix(word, s) {
-			p = LastIndex(word, s)
+		if hasSuffix(word, s) {
+			p = lastIndex(word, s)
 			if p >= r2 {
 				word = word[0:p]
 
-				if HasSuffix(word, []rune("at")) {
-					p = LastIndex(word, []rune("at"))
+				if hasSuffix(word, []rune("at")) {
+					p = lastIndex(word, []rune("at"))
 					if p >= r2 {
 						word = word[0:p]
 
-						if HasSuffix(word, []rune("ic")) {
-							p = LastIndex(word, []rune("ic"))
+						if hasSuffix(word, []rune("ic")) {
+							p = lastIndex(word, []rune("ic"))
 							if p >= r2 {
 								word = word[0:p]
 							}
@@ -569,8 +430,8 @@ func step2(word []rune) []rune {
 	rv := findRV(word)
 
 	for _, s := range verbsuff {
-		if HasSuffix(word[rv:], s) {
-			p := LastIndex(word, s)
+		if hasSuffix(word[rv:], s) {
+			p := lastIndex(word, s)
 			return word[0:p]
 		}
 	}
@@ -581,15 +442,15 @@ func step3a(word []rune) []rune {
 	rv := findRV(word)
 
 	for _, s := range [][]rune{[]rune("a"), []rune("e"), []rune("i"), []rune("o"), []rune("à"), []rune("è"), []rune("ì"), []rune("ò")} {
-		if !HasSuffix(word, []rune(s)) {
+		if !hasSuffix(word, []rune(s)) {
 			continue
 		}
-		p := LastIndex(word, []rune(s))
+		p := lastIndex(word, []rune(s))
 		if p >= rv {
 			word = word[0:p]
 
-			if HasSuffix(word, []rune("i")) {
-				pp := LastIndex(word, []rune("i"))
+			if hasSuffix(word, []rune("i")) {
+				pp := lastIndex(word, []rune("i"))
 				if pp >= rv {
 					word = word[0:pp]
 					return word
@@ -606,15 +467,15 @@ func step3b(word []rune) []rune {
 	rv := findRV(word)
 	var p int
 
-	if HasSuffix(word, []rune("ch")) {
-		p = LastIndex(word, []rune("ch"))
+	if hasSuffix(word, []rune("ch")) {
+		p = lastIndex(word, []rune("ch"))
 		if p >= rv {
 			return Join(word[0:p], []rune("c"))
 		}
 	}
 
-	if HasSuffix(word, []rune("gh")) {
-		p = LastIndex(word, []rune("gh"))
+	if hasSuffix(word, []rune("gh")) {
+		p = lastIndex(word, []rune("gh"))
 		if p >= rv {
 			return Join(word[0:p], []rune("g"))
 		}
@@ -651,7 +512,7 @@ func prepareWord(word []rune) []rune {
 			word[i] = 'ù'
 		}
 	}
-	word = Replace(word, []rune("qu"), []rune("qU"), -1)
+	word = replace(word, []rune("qu"), []rune("qU"), -1)
 
 	var oldr rune
 	var newword []rune
@@ -699,7 +560,7 @@ func StemWithoutLowerCasing(s []rune) []rune {
 	word0 := step0(word)
 	word1 := step1(word0)
 
-	if Equal(word0, word1) {
+	if equal(word0, word1) {
 		word = step2(word1)
 	} else {
 		word = word1

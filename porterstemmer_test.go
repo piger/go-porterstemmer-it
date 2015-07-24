@@ -22,7 +22,7 @@ func TestPrepareWord(t *testing.T) {
 
 	for _, test := range tests {
 		result := prepareWord(test.Word)
-		if !Equal(result, test.Stem) {
+		if !equal(result, test.Stem) {
 			t.Fatalf("'%s' should be %q, is %q\n", string(test.Word), string(test.Stem), string(result))
 		}
 	}
@@ -33,23 +33,23 @@ func TestEqual(t *testing.T) {
 	a := []rune("ciao")
 	b := []rune("pippo")
 
-	if Equal(a, b) {
+	if equal(a, b) {
 		t.Fail()
 	}
 
-	if !Equal([]rune("peto"), []rune("peto")) {
+	if !equal([]rune("peto"), []rune("peto")) {
 		t.Fail()
 	}
 }
 
 func TestHasSuffix(t *testing.T) {
 	a := []rune("cippalippa")
-	if !HasSuffix(a, []rune("lippa")) {
+	if !hasSuffix(a, []rune("lippa")) {
 		t.Fail()
 	}
 
 	b := []rune("petofono")
-	if HasSuffix(b, []rune("cazzy")) {
+	if hasSuffix(b, []rune("cazzy")) {
 		t.Fail()
 	}
 }
@@ -75,20 +75,20 @@ func TestStemWord(t *testing.T) {
 	var rv []rune
 	for _, test := range tests {
 		rv = StemWithoutLowerCasing(test.Word)
-		if !Equal(rv, test.Stem) {
+		if !equal(rv, test.Stem) {
 			t.Fatalf("Stem failed: '%s'->'%s' (should be: '%s')\n", string(test.Word), string(rv), string(test.Stem))
 		}
 	}
 }
 
 func TestFiles(t *testing.T) {
-	inFile, err := os.Open("../voc.txt")
+	inFile, err := os.Open("voc.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer inFile.Close()
 
-	outFile, err := os.Open("../output.txt")
+	outFile, err := os.Open("output.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,7 +102,7 @@ func TestFiles(t *testing.T) {
 		sOut := scannerOut.Text()
 
 		result := StemWithoutLowerCasing([]rune(sIn))
-		if !Equal(result, []rune(sOut)) {
+		if !equal(result, []rune(sOut)) {
 			t.Fatalf("%q: should be %q, is %q\n", string(sIn), string(sOut), string(result))
 		}
 	}
