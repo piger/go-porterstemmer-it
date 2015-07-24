@@ -595,17 +595,32 @@ func step3b(word []rune) []rune {
 }
 
 func restoreString(word []rune) []rune {
-	word = Replace(word, []rune("I"), []rune("i"), -1)
-	word = Replace(word, []rune("U"), []rune("u"), -1)
+	for i, r := range word {
+		switch r {
+		case 'I':
+			word[i] = 'i'
+		case 'U':
+			word[i] = 'u'
+		}
+	}
 	return word
 }
 
 func prepareWord(word []rune) []rune {
-	word = Replace(word, []rune("á"), []rune("à"), -1)
-	word = Replace(word, []rune("é"), []rune("è"), -1)
-	word = Replace(word, []rune("í"), []rune("ì"), -1)
-	word = Replace(word, []rune("ó"), []rune("ò"), -1)
-	word = Replace(word, []rune("ú"), []rune("ù"), -1)
+	for i, r := range word {
+		switch r {
+		case 'á':
+			word[i] = 'à'
+		case 'é':
+			word[i] = 'è'
+		case 'í':
+			word[i] = 'ì'
+		case 'ó':
+			word[i] = 'ò'
+		case 'ú':
+			word[i] = 'ù'
+		}
+	}
 	word = Replace(word, []rune("qu"), []rune("qU"), -1)
 
 	var oldr rune
