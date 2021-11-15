@@ -13,11 +13,11 @@ type StemTest struct {
 
 func TestPrepareWord(t *testing.T) {
 	tests := []StemTest{
-		StemTest{[]rune("bellí"), []rune("bellì")},
-		StemTest{[]rune("aiuola"), []rune("aIUola")},
-		StemTest{[]rune("buio"), []rune("buIo")},
-		StemTest{[]rune("báccánó"), []rune("bàccànò")},
-		StemTest{[]rune("quadro"), []rune("qUadro")},
+		{[]rune("bellí"), []rune("bellì")},
+		{[]rune("aiuola"), []rune("aIUola")},
+		{[]rune("buio"), []rune("buIo")},
+		{[]rune("báccánó"), []rune("bàccànò")},
+		{[]rune("quadro"), []rune("qUadro")},
 	}
 
 	for _, test := range tests {
@@ -56,20 +56,20 @@ func TestHasSuffix(t *testing.T) {
 
 func TestStemWord(t *testing.T) {
 	tests := []StemTest{
-		StemTest{[]rune("abbandonata"), []rune("abbandon")},
-		StemTest{[]rune("abbandonate"), []rune("abbandon")},
-		StemTest{[]rune("abbandonati"), []rune("abbandon")},
-		StemTest{[]rune("abbandonato"), []rune("abbandon")},
-		StemTest{[]rune("abbandonava"), []rune("abbandon")},
-		StemTest{[]rune("abbandonerà"), []rune("abbandon")},
-		StemTest{[]rune("abbandonerò"), []rune("abbandon")},
-		StemTest{[]rune("abbandoneranno"), []rune("abbandon")},
-		StemTest{[]rune("abbandono"), []rune("abband")},
-		StemTest{[]rune("abbaruffato"), []rune("abbaruff")},
-		StemTest{[]rune("abbassamento"), []rune("abbass")},
-		StemTest{[]rune("propagarla"), []rune("propag")},
-		StemTest{[]rune("propizio"), []rune("propiz")},
-		StemTest{[]rune("propio"), []rune("prop")},
+		{[]rune("abbandonata"), []rune("abbandon")},
+		{[]rune("abbandonate"), []rune("abbandon")},
+		{[]rune("abbandonati"), []rune("abbandon")},
+		{[]rune("abbandonato"), []rune("abbandon")},
+		{[]rune("abbandonava"), []rune("abbandon")},
+		{[]rune("abbandonerà"), []rune("abbandon")},
+		{[]rune("abbandonerò"), []rune("abbandon")},
+		{[]rune("abbandoneranno"), []rune("abbandon")},
+		{[]rune("abbandono"), []rune("abband")},
+		{[]rune("abbaruffato"), []rune("abbaruff")},
+		{[]rune("abbassamento"), []rune("abbass")},
+		{[]rune("propagarla"), []rune("propag")},
+		{[]rune("propizio"), []rune("propiz")},
+		{[]rune("propio"), []rune("prop")},
 	}
 
 	var rv []rune
